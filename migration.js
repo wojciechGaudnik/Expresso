@@ -14,11 +14,12 @@ db.serialize(function () {
     db.run(`drop table if exists TimeSheet`);
     db.run(`create table TimeSheet
             (
-                id          integer not null primary key autoincrement ,
-                hours       integer not null ,
-                rate        integer not null ,
-                date        integer not null ,
-                employee_id integer not null references Employee (id)
+                id          integer not null primary key autoincrement,
+                hours       integer not null,
+                rate        integer not null,
+                date        integer not null,
+                employee_id integer not null,
+                foreign key (employee_id) references Employee (id)
             );`);
     db.run(`drop table if exists Menu`);
     db.run(`create table Menu
@@ -29,11 +30,12 @@ db.serialize(function () {
     db.run(`drop table if exists MenuItem`);
     db.run(`create table MenuItem
             (
-                id          integer not null primary key autoincrement ,
-                name        text    not null ,
+                id          integer not null primary key autoincrement,
+                name        text    not null,
                 description text,
-                inventory   integer not null ,
-                price       integer not null ,
-                menu_id     integer not null references Menu (id) 
+                inventory   integer not null,
+                price       integer not null,
+                menu_id     integer not null references Menu (id),
+                foreign key (menu_id) references Menu (id)
             );`);
 });
