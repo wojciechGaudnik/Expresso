@@ -5,35 +5,35 @@ db.serialize(function () {
     db.run(`drop table if exists Employee`);
     db.run(`create table Employee
             (
-                id                  integer not null primary key,
-                name                text    not null,
-                position            text    not null,
-                wage                integer not null,
-                is_current_employee integer default 1
+                id                  integer not null primary key autoincrement ,
+                name                text    not null default '',
+                position            text    not null default '',
+                wage                integer not null default 0,
+                is_current_employee integer
             );`);
     db.run(`drop table if exists TimeSheet`);
     db.run(`create table TimeSheet
             (
-                id          integer not null primary key,
-                hours       integer not null,
-                rate        integer not null,
-                date        integer not null,
+                id          integer not null primary key autoincrement ,
+                hours       integer not null default 0,
+                rate        integer not null default 0,
+                date        integer not null default 0,
                 employee_id integer not null references Employee (id)
             );`);
     db.run(`drop table if exists Menu`);
     db.run(`create table Menu
             (
-                id    integer not null primary key,
+                id    integer not null primary key autoincrement ,
                 title text    not null
             );`);
     db.run(`drop table if exists MenuItem`);
     db.run(`create table MenuItem
             (
-                id          integer not null primary key,
-                name        text    not null,
+                id          integer not null primary key autoincrement ,
+                name        text    not null default '',
                 description text,
-                inventory   integer not null,
-                price       integer not null,
-                menu_id     integer not null references Menu (id)
+                inventory   integer not null default 0,
+                price       integer not null default 0,
+                menu_id     integer not null references Menu (id) default 0
             );`);
 });
