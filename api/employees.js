@@ -66,5 +66,41 @@ employeesRouter.post('/', (req, res, next) => {
     });
 });
 
+employeesRouter.put('/:employeeId', (req, res, next) => {
+    const employeeId = req.params.employeeId;
+    const name = req.body.employee.name;
+    const position = req.body.employee.position;
+    const wage = req.body.employee.wage;
+    const isCurrentlyEmployed = req.body.employee.is_current_employee === 0 ? 0 : 1;
+    if (!name || !position || !wage) {
+        return res.sendStatus(400);
+    }
+
+    db.run(`update Employee
+            set name                = $name,
+                position            = $position,
+                wage                = $wage,
+                is_current_employee = $isCurrentlyEmployed
+            where Employee.id = $employeeId;
+    `, {
+        $name: name,
+        $position: position,
+        $wage: wage,
+        $isCurrentlyEmployed: isCurrentlyEmployed,
+        $employeeId: employeeId
+    }, (err) => {
+        if (err) {
+            next(err);
+        } else {
+            db.get(`select * from Employee where id = ${req.params.employeeId}`, (err, employee) => {
+                if (err) {
+                    next(err);
+                } else {
+                    res.status(200).json({employee: employee});
+                }
+            });
+        }
+    });
+})
 
 module.exports = employeesRouter;
