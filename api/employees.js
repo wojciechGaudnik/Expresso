@@ -16,7 +16,7 @@ employeesRouter.param('employeeId', ((req, res, next, employeeID) => {
             req.employee = employee;
             next();
         } else {
-            res.sendStatus(404);
+            return res.sendStatus(404);
         }
     })
 }));
@@ -28,7 +28,6 @@ employeesRouter.get('/', (req, res, next) => {
         if (err) {
             next(err);
         } else {
-            console.log("200");
             res.status(200).json({employees: employees})
         }
     });
@@ -105,7 +104,6 @@ employeesRouter.put('/:employeeId', (req, res, next) => {
 })
 
 employeesRouter.delete("/:employeeId", (req, res, next) => {
-    console.log("start");
     const sqlUpdate = `update Employee
                        set is_current_employee = 0
                        where id = $employeeId;
