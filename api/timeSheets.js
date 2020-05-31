@@ -39,6 +39,48 @@ timeSheetsRouter.post('/', (req, res, nest) => {
                 });
             }
         });
-})
+});
+
+timeSheetsRouter.put('/:timeSheetId', (req, res, next) => {
+    db.get(`select *
+            from TimeSheet
+            where id = $timeSheetId and employee_id = $employeeId`,
+        {
+            $timeSheetId: req.params.timeSheetId,
+            $employeeId: req.params.employeeId
+        }, (err, timeSheet) => {
+        if (err) {
+            next(err);
+        } else if (!timeSheet){
+            return res.sendStatus(404);
+        } else {
+            const hours = req.body.timeSheet.hours;
+            const rate = req.body.timeSheet.rate;
+            const date = req.body.timeSheet.date;
+            if (!hours || !rate || !date) {
+                return res.status(400).send();
+            }
+            db.run(`update TimeSheet
+                    set hours = $hours,
+                        rate  = $rate,
+                        date  = $date
+                    where id = $timeSheetId;
+            `, {
+                $hours: hours,
+                $rate: rate,
+                $date: date,
+                $timeSheetId: req.params.timeSheetId
+            }, (err) => {
+                if (err) {
+                    next(err);
+                } else {
+                    db.get(`select * from TimeSheet where id = ${req.params.timeSheetId}`, (err, timeSheet) => {
+                        res.status(200).json({timeSheet: timeSheet});
+                    });
+                }
+            });
+        }
+    });
+});
 
 module.exports = timeSheetsRouter;
