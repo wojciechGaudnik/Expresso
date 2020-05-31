@@ -1,8 +1,10 @@
 const express = require('express');
 const employeesRouter = express.Router();
-
+const timeSheetsRouter = require('./timeSheets');
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database(process.env.TEST_DATABASE || 'database.sqlite');
+
+employeesRouter.use('/:employeeId/timesheets', timeSheetsRouter);
 
 employeesRouter.param('employeeId', ((req, res, next, employeeID) => {
     db.get(`select *
