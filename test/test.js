@@ -585,7 +585,7 @@ describe('POST /api/employees/:employeeId/timeSheets', function() {
         .post('/api/employees/2/timeSheets')
         .send({timeSheet: newTimesheet})
         .then(function() {
-          testDb.all('SELECT * FROM timeSheet', function(error, result) {
+          testDb.all('SELECT * FROM TimeSheet', function(error, result) {
             const timeSheet = result.find(timeSheet => timeSheet.date === newTimesheet.date);
             expect(timeSheet).to.exist;
             expect(timeSheet.id).to.exist;
@@ -657,7 +657,7 @@ describe('PUT /api/employees/:employeeId/timeSheets/:timeSheetId', function() {
         .put('/api/employees/1/timeSheets/2')
         .send({timeSheet: updatedTimesheet})
         .then(function() {
-          testDb.get('SELECT * FROM timeSheet WHERE timeSheet.id = 2', function(error, timeSheet) {
+          testDb.get('SELECT * FROM TimeSheet WHERE TimeSheet.id = 2', function(error, timeSheet) {
             if (error) {
               throw new Error(error);
             }
@@ -741,7 +741,7 @@ describe('DELETE /api/employees/:employeeId/timeSheets/:timeSheetId', function()
     request(app)
         .del('/api/employees/2/timeSheets/1')
         .then(function() {
-          testDb.get('SELECT * FROM timeSheet WHERE timeSheet.id = 1', function(error, timeSheet) {
+          testDb.get('SELECT * FROM TimeSheet WHERE TimeSheet.id = 1', function(error, timeSheet) {
             if (error) {
               throw new Error(error);
             }

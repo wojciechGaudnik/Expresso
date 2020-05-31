@@ -48,9 +48,9 @@ timeSheetsRouter.put('/:timeSheetId', (req, res, next) => {
         {
             $timeSheetId: req.params.timeSheetId,
             $employeeId: req.params.employeeId
-        }, (err, timeSheet) => {
-        if (err) {
-            next(err);
+        }, (errGet, timeSheet) => {
+        if (errGet) {
+            next(errGet);
         } else if (!timeSheet){
             return res.sendStatus(404);
         } else {
@@ -70,13 +70,40 @@ timeSheetsRouter.put('/:timeSheetId', (req, res, next) => {
                 $rate: rate,
                 $date: date,
                 $timeSheetId: req.params.timeSheetId
-            }, (err) => {
-                if (err) {
-                    next(err);
+            }, (errRun) => {
+                if (errRun) {
+                    next(errRun);
                 } else {
-                    db.get(`select * from TimeSheet where id = ${req.params.timeSheetId}`, (err, timeSheet) => {
-                        res.status(200).json({timeSheet: timeSheet});
+                    db.get(`select * from TimeSheet where id = ${req.params.timeSheetId}`, (err, timeSheetGet) => {
+                        res.status(200).json({timeSheet: timeSheetGet});
                     });
+                }
+            });
+        }
+    });
+});
+
+timeSheetsRouter.delete('/:timeSheetId', (req, res, next) => {
+    const sqlTest = 'SELECT * FROM Timesheet WHERE Timesheet.id = $timeSheetId';
+    const sql = 'DELETE FROM Timesheet WHERE Timesheet.id = $timeSheetId';
+    const values = {$timeSheetId: req.params.timeSheetId};
+    db.get(sqlTest, values, (err, timeSheet) => {
+        console.log("start ");
+        if (err) {
+            console.log("1 error");
+            next(err);
+        } else if (!timeSheet) {
+            console.log("1 else");
+            res.sendStatus(404);
+        } else {
+            console.log("2 else");
+            db.run(sql, values, (error) => {
+                if (error) {
+                    console.log("2 error");
+                    next(error);
+                } else {
+                    console.log("3 else");
+                    res.sendStatus(204);
                 }
             });
         }
