@@ -3,7 +3,6 @@ const employeesRouter = express.Router();
 
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database(process.env.TEST_DATABASE || 'database.sqlite');
-console.log(process.env.TEST_DATABASE);
 
 employeesRouter.param('employeeId', ((req, res, next, employeeID) => {
     db.get(`select *
@@ -99,6 +98,24 @@ employeesRouter.put('/:employeeId', (req, res, next) => {
                     res.status(200).json({employee: employee});
                 }
             });
+        }
+    });
+})
+
+employeesRouter.delete("/:employeeId", (req, res, next) => {
+    console.log("start");
+    const sqlUpdate = `update Employee
+                       set is_current_employee = 0
+                       where id = $employeeId;
+    `;
+    const values = {$employeeId: req.employee.id}
+    db.run(sqlUpdate, values, (err) => {
+        if (err) {
+            next(err);
+        } else {
+            db.get(`select * from Employee where id = ${req.params.employeeId}`, (err, employee) => {
+                res.status(200).json({employee: employee});
+            })
         }
     });
 })
