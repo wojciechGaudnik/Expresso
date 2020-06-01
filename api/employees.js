@@ -51,13 +51,13 @@ employeesRouter.post('/', (req, res, next) => {
         $name: name,
         $position: position,
         $wage: wage
-    }, function (err) {
-        if (err) {
-            next(err);
+    }, function (errRun) {
+        if (errRun) {
+            next(errRun);
         } else {
-            db.get(`select * from Employee where id = ${this.lastID}`, (err, employee) => {
-                if (err) {
-                    next(err);
+            db.get(`select * from Employee where id = ${this.lastID}`, (errGet, employee) => {
+                if (errGet) {
+                    next(errGet);
                 } else {
                     res.status(201).json({employee: employee});
                 }
@@ -92,9 +92,9 @@ employeesRouter.put('/:employeeId', (req, res, next) => {
         if (err) {
             next(err);
         } else {
-            db.get(`select * from Employee where id = ${req.params.employeeId}`, (err, employee) => {
-                if (err) {
-                    next(err);
+            db.get(`select * from Employee where id = ${req.params.employeeId}`, (errGet, employee) => {
+                if (errGet) {
+                    next(errGet);
                 } else {
                     res.status(200).json({employee: employee});
                 }
@@ -113,7 +113,7 @@ employeesRouter.delete("/:employeeId", (req, res, next) => {
         if (err) {
             next(err);
         } else {
-            db.get(`select * from Employee where id = ${req.params.employeeId}`, (err, employee) => {
+            db.get(`select * from Employee where id = ${req.params.employeeId}`, (errRun, employee) => {
                 res.status(200).json({employee: employee});
             })
         }
