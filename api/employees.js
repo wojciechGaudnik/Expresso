@@ -16,7 +16,7 @@ employeesRouter.param('employeeId', ((req, res, next, employeeID) => {
             req.employee = employee;
             next();
         } else {
-            return res.sendStatus(404);
+            res.sendStatus(404);
         }
     })
 }));

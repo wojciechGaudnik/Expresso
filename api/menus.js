@@ -13,7 +13,7 @@ menusRouter.param('menuId', (req, res, next, menuId) => {
             req.menu = menu;
             next();
         } else {
-            return res.sendStatus(404);
+            res.sendStatus(404);
         }
     });
 })
@@ -33,6 +33,24 @@ menusRouter.get('/', (req, res, next) => {
 menusRouter.get('/:menuId', (req, res) => {
     res.status(200).json({menu: req.menu});
 })
+
+menusRouter.post('/', (req, res, next) => {
+    const title = req.body.menu.title;
+    if (!title) {
+        return res.sendStatus(400);
+    }
+
+    db.run(`insert into Menu (title)
+            values ($title)`, {$title: title}, function (err) {
+        if (err) {
+            next(err);
+        } else {
+            db.get(`select * from Menu where id = ${this.lastID}`, (errorGet, menu) => {
+                res.status(201).json({menu: menu});
+            });
+        }
+    });
+});
 
 
 module.exports = menusRouter;
