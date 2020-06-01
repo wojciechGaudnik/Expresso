@@ -105,4 +105,18 @@ menuItemsRouter.put('/:menuItemId', (req, res, next) => {
     });
 });
 
+menuItemsRouter.delete('/:menuItemId', (req, res, next) => {
+    db.run(`delete
+            from MenuItem
+            where id = $menuItemId;`,
+        {$menuItemId: req.params.menuItemId},
+        (errorRun) => {
+        if (errorRun) {
+            next(errorRun);
+        } else {
+            res.sendStatus(204);
+        }
+    });
+});
+
 module.exports = menuItemsRouter;
