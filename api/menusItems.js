@@ -63,4 +63,46 @@ menuItemsRouter.post('/', (req, res, next) => {
     });
 });
 
+menuItemsRouter.put('/:menuItemId', (req, res, next) => {
+    const name = req.body.menuItem.name;
+    const description = req.body.menuItem.description;
+    const inventory = req.body.menuItem.inventory;
+    const price = req.body.menuItem.price;
+    const menuId = req.params.menuId;
+
+    db.get('select * from Menu where id = $menuId', {$menuId: menuId}, (errorGet, menu) => {
+        if (errorGet) {
+            next(errorGet);
+        } else {
+            if (!name || !inventory || !price || !menu) {
+                return res.sendStatus(400);
+            }
+            db.run(`update MenuItem
+                    set name        = $name,
+                        description = $description,
+                        inventory   = $inventory,
+                        price       = $price,
+                        menu_id     = $menuId
+                    where id = $menuItemId;
+                    `, {
+                $name: name,
+                $description: description,
+                $inventory: inventory,
+                $price: price,
+                $menuId: menuId,
+                $menuItemId: req.params.menuItemId
+            }, function (errorRun) {
+                if (errorRun) {
+                    next(errorRun);
+                } else {
+                    db.get(`select * from MenuItem where id = ${req.params.menuItemId}`,
+                        (error, menuItem) => {
+                            res.status(200).json({menuItem: menuItem});
+                        });
+                }
+            });
+        }
+    });
+});
+
 module.exports = menuItemsRouter;
